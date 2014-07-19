@@ -1,4 +1,4 @@
-# Python 3 parser
+# Python 3 parser &nbsp; [![Build Status](https://travis-ci.org/bkiers/python3-parser.png)](https://travis-ci.org/bkiers/python3-parser)
 
 An ANTLR4 grammar for Python 3 based on version 3.3.5 of 
 [The Python Language Reference](https://docs.python.org/3.3/reference/grammar.html).

@@ -46,6 +46,9 @@ tokens { INDENT, DEDENT }
   // The amount of opened braces, brackets and parenthesis.
   private int opened = 0;
 
+  // The most recently produced token.
+  private Token lastToken = null;
+
   @Override
   public void emit(Token t) {
     super.setToken(t);
@@ -63,15 +66,26 @@ tokens { INDENT, DEDENT }
 
       // Now emit as much DEDENT tokens as needed.
       while (!indents.isEmpty()) {
-        this.emit(new CommonToken(Python3Parser.DEDENT, "DEDENT"));
+        this.emit(createDedent());
         indents.pop();
       }
     }
 
     Token next = super.nextToken();
 
+    if (next.getChannel() == Token.DEFAULT_CHANNEL) {
+      // Keep track of the last token on the default channel.
+      this.lastToken = next;
+    }
+
     return tokens.isEmpty() ? next : tokens.poll();
-  }  
+  }
+
+  private Token createDedent() {
+    CommonToken dedent = new CommonToken(Python3Parser.DEDENT, "DEDENT");
+    dedent.setLine(this.lastToken.getLine());
+    return dedent;
+  }
   
   // Calculates the indentation of the provided spaces, taking the 
   // following rules into account:
@@ -725,7 +739,7 @@ NEWLINE
        else {
          // Possibly emit more than 1 DEDENT token.
          while(!indents.isEmpty() && indents.peek() > indent) {
-           emit(new CommonToken(Python3Parser.DEDENT, "DEDENT"));
+           this.emit(createDedent());
            indents.pop();
          }
        }

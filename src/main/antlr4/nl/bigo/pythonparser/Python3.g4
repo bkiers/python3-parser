@@ -62,7 +62,7 @@ tokens { INDENT, DEDENT }
     if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
 
       // First emit an extra line break that serves as the end of the statement.
-      this.emit(new CommonToken(Python3Parser.NEWLINE, "\n"));
+      this.emit(commonToken(Python3Parser.NEWLINE, "\n"));
 
       // Now emit as much DEDENT tokens as needed.
       while (!indents.isEmpty()) {
@@ -82,9 +82,23 @@ tokens { INDENT, DEDENT }
   }
 
   private Token createDedent() {
-    CommonToken dedent = new CommonToken(Python3Parser.DEDENT, "DEDENT");
+    CommonToken dedent = commonToken(Python3Parser.DEDENT, "");
     dedent.setLine(this.lastToken.getLine());
     return dedent;
+  }
+
+  private String createSpaces(int amount) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < amount; i++) {
+      builder.append(' ');
+    }
+    return builder.toString();
+  }
+
+  private CommonToken commonToken(int type, String text) {
+    int start = this.getCharIndex();
+    int stop = start + text.length();
+    return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
   }
   
   // Calculates the indentation of the provided spaces, taking the 
@@ -723,7 +737,7 @@ NEWLINE
        skip();
      }
      else {
-       emit(new CommonToken(NEWLINE, "\n"));
+       emit(commonToken(NEWLINE, "\n"));
 
        int indent = getIndentationCount(spaces);
        int previous = indents.isEmpty() ? 0 : indents.peek();
@@ -734,7 +748,7 @@ NEWLINE
        }
        else if (indent > previous) {
          indents.push(indent);
-         emit(new CommonToken(Python3Parser.INDENT, "INDENT"));
+         emit(commonToken(Python3Parser.INDENT, createSpaces(indent - previous)));
        }
        else {
          // Possibly emit more than 1 DEDENT token.

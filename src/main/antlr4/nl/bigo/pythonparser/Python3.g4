@@ -87,14 +87,6 @@ tokens { INDENT, DEDENT }
     return dedent;
   }
 
-  private String createSpaces(int amount) {
-    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < amount; i++) {
-      builder.append(' ');
-    }
-    return builder.toString();
-  }
-
   private CommonToken commonToken(int type, String text) {
     int start = this.getCharIndex();
     int stop = start + text.length();
@@ -728,6 +720,7 @@ BREAK : 'break';
 NEWLINE
  : ( '\r'? '\n' | '\r' ) SPACES?
    {
+     String newLine = getText().replaceAll("[^\r\n]+", "");
      String spaces = getText().replaceAll("[\r\n]+", "");
      int next = _input.LA(1);
 
@@ -737,7 +730,7 @@ NEWLINE
        skip();
      }
      else {
-       emit(commonToken(NEWLINE, "\n"));
+       emit(commonToken(NEWLINE, newLine));
 
        int indent = getIndentationCount(spaces);
        int previous = indents.isEmpty() ? 0 : indents.peek();
@@ -748,7 +741,7 @@ NEWLINE
        }
        else if (indent > previous) {
          indents.push(indent);
-         emit(commonToken(Python3Parser.INDENT, createSpaces(indent - previous)));
+         emit(commonToken(Python3Parser.INDENT, spaces));
        }
        else {
          // Possibly emit more than 1 DEDENT token.

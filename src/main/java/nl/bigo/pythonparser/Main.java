@@ -10,17 +10,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class Main {
 
     /**
-     * Prints the (ASCII) parse tree from a given Python source string.
-     *
-     * @param source
-     *         the Python source to print the parse tree from.
-     */
-    public static void printTree(String source) {
-
-        System.out.println(new Builder.Tree(source).toStringASCII());
-    }
-
-    /**
      * An example how to use a listener that lists all method names from
      * a Python source string.
      *
@@ -53,7 +42,7 @@ public class Main {
 
         System.out.println(source);
 
-        printTree(source);
+        System.out.println(new Builder.Tree(source).toStringASCII());
 
         listMethodNames(source);
     }

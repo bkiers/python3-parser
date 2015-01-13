@@ -38,7 +38,7 @@ tokens { INDENT, DEDENT }
 @lexer::members {
 
   // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
-  private java.util.Queue<Token> tokens = new java.util.LinkedList<>();
+  private java.util.LinkedList<Token> tokens = new java.util.LinkedList<>();
 
   // The stack that keeps track of the indentation level.
   private java.util.Stack<Integer> indents = new java.util.Stack<>();
@@ -61,8 +61,12 @@ tokens { INDENT, DEDENT }
     // Check if the end-of-file is ahead and there are still some DEDENTS expected.
     if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
 
-      // Poll the EOF from the token stream so that a linebreak can be placed upon it.
-      tokens.poll();
+      // Remove any trailing EOF tokens from our buffer.
+      for (int i = tokens.size() - 1; i >= 0; i--) {
+        if (tokens.get(i).getType() == EOF) {
+          tokens.remove(i);
+        }
+      }
 
       // First emit an extra line break that serves as the end of the statement.
       this.emit(commonToken(Python3Parser.NEWLINE, "\n"));
@@ -402,9 +406,9 @@ for_stmt
 
 /// try_stmt: ('try' ':' suite
 ///            ((except_clause ':' suite)+
-/// 	    ['else' ':' suite]
-/// 	    ['finally' ':' suite] |
-/// 	   'finally' ':' suite))
+///       ['else' ':' suite]
+///       ['finally' ':' suite] |
+///      'finally' ':' suite))
 try_stmt
  : TRY ':' suite ( ( except_clause ':' suite )+ 
                    ( ELSE ':' suite )? 

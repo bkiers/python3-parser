@@ -71,4 +71,32 @@ public class Python3ParserTest {
             .build()
             .file_input();
     }
+
+    @Test
+    public void trailingCommentShouldPass() {
+        new Builder.Parser("def func():\n" +
+                           "  return 42\n" +
+                           "  # comment")
+            .build()
+            .file_input();
+    }
+
+    @Test
+    public void leadingCommentShouldPass() {
+        new Builder.Parser("# comment\n" +
+                           "def func():\n" +
+                           "  return 42")
+            .build()
+            .file_input();
+    }
+
+    @Test
+    public void leadingAndTrailingCommentShouldPass() {
+        new Builder.Parser("# line break\n" +
+                           "def func():\n" +
+                           "  return 42\n" +
+                           "  # comment")
+            .build()
+            .file_input();
+    }
 }

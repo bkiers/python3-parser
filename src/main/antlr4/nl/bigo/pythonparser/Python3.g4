@@ -55,41 +55,41 @@ tokens { INDENT, DEDENT }
     tokens.offer(t);
   }
 
-	@Override
-	public Token nextToken() {
+  @Override
+  public Token nextToken() {
 
-	  // Check if the end-of-file is ahead and there are still some DEDENTS expected.
-	  if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
+    // Check if the end-of-file is ahead and there are still some DEDENTS expected.
+    if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
 
-	    // Remove any trailing EOF tokens from our buffer.
-	    for (int i = tokens.size() - 1; i >= 0; i--) {
+      // Remove any trailing EOF tokens from our buffer.
+      for (int i = tokens.size() - 1; i >= 0; i--) {
         if (tokens.get(i).getType() == EOF) {
           tokens.remove(i);
         }
-		  }
+      }
 
-	    // First emit an extra line break that serves as the end of the statement.
-	    this.emit(commonToken(Python3Parser.NEWLINE, "\n"));
+      // First emit an extra line break that serves as the end of the statement.
+      this.emit(commonToken(Python3Parser.NEWLINE, "\n"));
 
-	    // Now emit as much DEDENT tokens as needed.
-	    while (!indents.isEmpty()) {
-	      this.emit(createDedent());
-	      indents.pop();
-	    }
+      // Now emit as much DEDENT tokens as needed.
+      while (!indents.isEmpty()) {
+        this.emit(createDedent());
+        indents.pop();
+      }
 
-	    // Put the EOF back on the token stream.
-	    this.emit(commonToken(Python3Parser.EOF, "<EOF>"));
-	  }
+      // Put the EOF back on the token stream.
+      this.emit(commonToken(Python3Parser.EOF, "<EOF>"));
+    }
 
-	  Token next = super.nextToken();
+    Token next = super.nextToken();
 
-	  if (next.getChannel() == Token.DEFAULT_CHANNEL) {
-	    // Keep track of the last token on the default channel.
-	    this.lastToken = next;
-	  }
+    if (next.getChannel() == Token.DEFAULT_CHANNEL) {
+      // Keep track of the last token on the default channel.
+      this.lastToken = next;
+    }
 
-	  return tokens.isEmpty() ? next : tokens.poll();
-	}
+    return tokens.isEmpty() ? next : tokens.poll();
+  }
 
   private Token createDedent() {
     CommonToken dedent = commonToken(Python3Parser.DEDENT, "");
@@ -406,9 +406,9 @@ for_stmt
 
 /// try_stmt: ('try' ':' suite
 ///            ((except_clause ':' suite)+
-/// 	    ['else' ':' suite]
-/// 	    ['finally' ':' suite] |
-/// 	   'finally' ':' suite))
+///       ['else' ':' suite]
+///       ['finally' ':' suite] |
+///      'finally' ':' suite))
 try_stmt
  : TRY ':' suite ( ( except_clause ':' suite )+ 
                    ( ELSE ':' suite )? 

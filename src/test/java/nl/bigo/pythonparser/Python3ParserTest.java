@@ -63,4 +63,12 @@ public class Python3ParserTest {
             }
         }
     }
+
+    @Test(expected=RuntimeException.class)
+    public void leadingIndentationShouldFail() {
+        new Builder.Parser("  def func():\n" +
+                           "  return 42")
+            .build()
+            .file_input();
+    }
 }

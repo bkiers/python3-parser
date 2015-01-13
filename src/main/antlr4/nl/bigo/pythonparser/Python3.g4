@@ -37,12 +37,12 @@ tokens { INDENT, DEDENT }
 
 @lexer::members {
 
-  // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).         
+  // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
   private java.util.Queue<Token> tokens = new java.util.LinkedList<>();
-  
+
   // The stack that keeps track of the indentation level.
   private java.util.Stack<Integer> indents = new java.util.Stack<>();
-  
+
   // The amount of opened braces, brackets and parenthesis.
   private int opened = 0;
 
@@ -98,19 +98,19 @@ tokens { INDENT, DEDENT }
     int stop = start + text.length();
     return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
   }
-  
-  // Calculates the indentation of the provided spaces, taking the 
+
+  // Calculates the indentation of the provided spaces, taking the
   // following rules into account:
   //
-  // "Tabs are replaced (from left to right) by one to eight spaces 
-  //  such that the total number of characters up to and including 
+  // "Tabs are replaced (from left to right) by one to eight spaces
+  //  such that the total number of characters up to and including
   //  the replacement is a multiple of eight [...]"
   //
   //  -- https://docs.python.org/3.1/reference/lexical_analysis.html#indentation
   static int getIndentationCount(String spaces) {
-    
+
     int count = 0;
-          
+
     for (char ch : spaces.toCharArray()) {
       switch (ch) {
         case '\t':
@@ -121,8 +121,12 @@ tokens { INDENT, DEDENT }
           count++;
       }
     }
-          
-    return count;                                
+
+    return count;
+  }
+
+  boolean atStartOfInput() {
+    return super.getCharPositionInLine() == 0 && super.getLine() == 1;
   }
 }
 
@@ -724,7 +728,9 @@ CONTINUE : 'continue';
 BREAK : 'break';
 
 NEWLINE
- : ( '\r'? '\n' | '\r' ) SPACES?
+ : ( {atStartOfInput()}?   SPACES
+   | ( '\r'? '\n' | '\r' ) SPACES?
+   )
    {
      String newLine = getText().replaceAll("[^\r\n]+", "");
      String spaces = getText().replaceAll("[\r\n]+", "");

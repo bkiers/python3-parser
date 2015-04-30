@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,10 +124,18 @@ public final class Builder {
                         indent += (childListStack.get(i).size() > 0) ? "|  " : "   ";
                     }
 
+                    String text;
+
+                    if (tree instanceof TerminalNode && tree.getText().trim().isEmpty()) {
+                        text = "<" + Python3Parser.tokenNames[((TerminalNode)tree).getSymbol().getType()] + ">";
+                    } else {
+                        text = tree.getText().replace("\r", "").replace("\n", "\\n");
+                    }
+
                     builder.append(indent)
-                            .append(childStack.isEmpty() ? "'- " : "|- ")
-                            .append(node.startsWith("terminal") ? tree.getText().replace("\r", "").replace("\n", "\\n") : node)
-                            .append("\n");
+                        .append(childStack.isEmpty() ? "'- " : "|- ")
+                        .append(node.startsWith("terminal") ? text : node)
+                        .append("\n");
 
                     if (tree.getChildCount() > 0) {
                         List<ParseTree> children = new ArrayList<>();

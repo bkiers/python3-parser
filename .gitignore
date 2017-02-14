@@ -2,6 +2,12 @@
 *.iml
 .idea/
 
+# Eclipse project files
+/.classpath
+/.project
+/.pydevproject
+/.settings/
+
 # binaries
 gen/
 target/

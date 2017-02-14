@@ -566,7 +566,7 @@ atom
  | '{' dictorsetmaker? '}' 
  | NAME 
  | number 
- | string+ 
+ | str+ 
  | '...' 
  | NONE
  | TRUE
@@ -674,7 +674,7 @@ yield_arg
  | testlist
  ;
 
-string
+str
  : STRING_LITERAL
  | BYTES_LITERAL
  ;
@@ -867,7 +867,7 @@ RIGHT_SHIFT_ASSIGN : '>>=';
 POWER_ASSIGN : '**=';
 IDIV_ASSIGN : '//=';
 
-SKIP
+SKIP_
  : ( SPACES | COMMENT | LINE_JOINING ) -> skip
  ;
 

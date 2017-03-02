@@ -16,6 +16,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class Python3ParserLiveTest {
@@ -32,6 +33,7 @@ public class Python3ParserLiveTest {
 	private static final String CPYTHON_ROOT = "/absolute.path.to/python/cpython";
 
 	@Test
+	@Ignore
 	public void testParseWholePython33Library() throws IOException {
 		try {
 			Files.walkFileTree(Paths.get(CPYTHON_ROOT), new ParseFiles());

@@ -1,6 +1,6 @@
 package nl.bigo.pythonparser;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class Python3LexerTest {
         // Make sure there is a line break at the end.
         source = source.trim() + "\n";
 
-        Python3Lexer lexer = new Python3Lexer(new ANTLRInputStream(source));
+        Python3Lexer lexer = new Python3Lexer(CharStreams.fromString(source));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
         // Make sure all tokens are created and buffered.
@@ -27,9 +27,9 @@ public class Python3LexerTest {
     @Test
     public void nameTest() {
 
-        CommonTokenStream tokens = tokenize("foo   __bar__   MU_42   Σ");
+        CommonTokenStream tokens = tokenize("foo   __bar__   MU_42   Σ   𝛏𝟬");
 
-        assertTrue(tokens.getTokens().size() >= 4);
+        assertTrue(tokens.getTokens().size() >= 5);
 
         assertThat(tokens.get(0).getType(), is(Python3Lexer.NAME));
         assertThat(tokens.get(0).getText(), is("foo"));
@@ -42,14 +42,17 @@ public class Python3LexerTest {
 
         assertThat(tokens.get(3).getType(), is(Python3Lexer.NAME));
         assertThat(tokens.get(3).getText(), is("Σ"));
+
+        assertThat(tokens.get(4).getType(), is(Python3Lexer.NAME));
+        assertThat(tokens.get(4).getText(), is("𝛏𝟬"));
     }
 
     @Test
     public void stringLiteralTest() {
 
-        CommonTokenStream tokens = tokenize("'''a'''    R'''b'''    r\"Σ\"    'mu \\n foo'");
+        CommonTokenStream tokens = tokenize("'''a'''    R'''b'''    r\"Σ\"    'mu \\n foo'     r\"😀\"");
 
-        assertTrue(tokens.getTokens().size() >= 4);
+        assertTrue(tokens.getTokens().size() >= 5);
 
         assertThat(tokens.get(0).getType(), is(Python3Lexer.STRING_LITERAL));
         assertThat(tokens.get(0).getText(), is("'''a'''"));
@@ -62,6 +65,9 @@ public class Python3LexerTest {
 
         assertThat(tokens.get(3).getType(), is(Python3Lexer.STRING_LITERAL));
         assertThat(tokens.get(3).getText(), is("'mu \\n foo'"));
+
+        assertThat(tokens.get(4).getType(), is(Python3Lexer.STRING_LITERAL));
+        assertThat(tokens.get(4).getText(), is("r\"😀\""));
     }
 
     @Test

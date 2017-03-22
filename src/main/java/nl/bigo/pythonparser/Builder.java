@@ -1,7 +1,8 @@
 package nl.bigo.pythonparser;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -22,10 +23,10 @@ public final class Builder {
         private Python3Lexer lexer;
 
         public Lexer(String input) {
-            this(new ANTLRInputStream(input));
+            this(CharStreams.fromString(input));
         }
 
-        public Lexer(ANTLRInputStream input) {
+        public Lexer(CharStream input) {
             this.lexer = new Python3Lexer(input);
             this.lexer.removeErrorListeners();
             this.lexer.addErrorListener(ERROR_LISTENER);
@@ -47,10 +48,10 @@ public final class Builder {
         private Python3Parser parser;
 
         public Parser(String input) {
-            this(new ANTLRInputStream(input));
+            this(CharStreams.fromString(input));
         }
 
-        public Parser(ANTLRInputStream input) {
+        public Parser(CharStream input) {
             Python3Lexer lexer = new Python3Lexer(input);
             lexer.removeErrorListeners();
             lexer.addErrorListener(ERROR_LISTENER);

@@ -93,7 +93,7 @@ tokens { INDENT, DEDENT }
 
   private Token createDedent() {
     CommonToken dedent = commonToken(Python3Parser.DEDENT, "");
-    dedent.setLine(this.lastToken.getLine());
+    dedent.setLine(this.lastToken.getLine() + 1);
     return dedent;
   }
 
